@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_pea1" default="compile.module.pea1">
+  <dirname property="module.pea1.basedir" file="${ant.file.module_pea1}"/>
+  
+  <property name="module.jdk.home.pea1" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.pea1" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.pea1" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.pea1" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="pea1.output.dir" value="${module.pea1.basedir}/out/production/PEA1"/>
+  <property name="pea1.testoutput.dir" value="${module.pea1.basedir}/out/test/PEA1"/>
+  
+  <path id="pea1.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="pea1.module.production.classpath">
+    <path refid="${module.jdk.classpath.pea1}"/>
+  </path>
+  
+  <path id="pea1.runtime.production.module.classpath">
+    <pathelement location="${pea1.output.dir}"/>
+  </path>
+  
+  <path id="pea1.module.classpath">
+    <path refid="${module.jdk.classpath.pea1}"/>
+    <pathelement location="${pea1.output.dir}"/>
+  </path>
+  
+  <path id="pea1.runtime.module.classpath">
+    <pathelement location="${pea1.testoutput.dir}"/>
+    <pathelement location="${pea1.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.pea1">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.pea1">
+    <patternset refid="excluded.from.module.pea1"/>
+  </patternset>
+  
+  <path id="pea1.module.sourcepath">
+    <dirset dir="${module.pea1.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.pea1" depends="compile.module.pea1.production,compile.module.pea1.tests" description="Compile module PEA1"/>
+  
+  <target name="compile.module.pea1.production" depends="register.custom.compilers" description="Compile module PEA1; production classes">
+    <mkdir dir="${pea1.output.dir}"/>
+    <javac2 destdir="${pea1.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.pea1}/javac">
+      <compilerarg line="${compiler.args.pea1}"/>
+      <bootclasspath refid="pea1.module.bootclasspath"/>
+      <classpath refid="pea1.module.production.classpath"/>
+      <src refid="pea1.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.pea1"/>
+    </javac2>
+    
+    <copy todir="${pea1.output.dir}">
+      <fileset dir="${module.pea1.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.pea1.tests" depends="register.custom.compilers,compile.module.pea1.production" description="compile module PEA1; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.pea1" description="cleanup module">
+    <delete dir="${pea1.output.dir}"/>
+    <delete dir="${pea1.testoutput.dir}"/>
+  </target>
+</project>
